@@ -1,8 +1,8 @@
 //Item Control - Controls all the items plus their state
-const ItemControl = (function () {
+const ItemControl =(function(){
 
   //constructor
-  const Item = function(id, name, calories) {
+  const Item = function(id, name, calories){
     this.id = id;
     this.name = name;
     this.calories = calories;
@@ -10,47 +10,42 @@ const ItemControl = (function () {
 
  //State
  const state = {
-   items: [
-     {id: 0, name: "Mango", calories: 150},
-     {id: 1, name: "Pasta", calories: 850},
-     {id: 2, name: "Oats", calories: 250}
-    ],
-   currentItem: null,
-   totalCalories: 0
- }
+  items: [
+    // {id: 0, name: "Mango", calories: 200},
+    // {id: 1, name: "Oats", calories: 400}
+  ],
+  currentItem: null,
+  totalCalories: 0
+}
  //PUBLIC
  return {
-  getItems: function() {
+  getItems: function(){
     return state.items;
   },
-   logState: function() {
-     return state; 
-   },
-   addItem: function(name, calories) {
+   addItem: function(name, calories){
      //CREATE ID
      let ID;
-    if(state.items.length > 0){
-      ID = state.items[state.items.length -1].id +1
+     if(state.items.length > 0){
+      ID = state.items[data.items.length - 1].id + 1;
     } else {
-      return ID=0;
+      ID = 0;
     }
-    //Calories to numbers
+    // Calories to number
     calories = parseInt(calories);
-
-    //Create new Item
+    // Create new item
     newItem = new Item(ID, name, calories);
-    //Add items to array
+    // Add to items array
     state.items.push(newItem);
-    //Return the newItem to be able to access info!
-    return newItem; 
-   }
-   
+    return newItem;
+  },
+   logData: function(){
+    return state; 
+  }
  }
-
 })();
 
 //UI Control - handles everything to do with the user interface and will therefore be responsible for list items, etc.
-const UIControl = (function () {
+const UIControl = (function(){
   const UISelectors = {
     itemList: "#item-list",
     addButton: ".add-btn",
@@ -60,10 +55,10 @@ const UIControl = (function () {
   
 //PUBLIC
 return {
-  createList: function(items) {
+  createList: function(items){
     let html = "";
     //Loop through items and create a list
-    items.forEach(function (item){
+    items.forEach(function(item){
       html += `
       <li class="collection-item" id="item-${item.id}">
         <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
@@ -74,8 +69,15 @@ return {
     //Insert list in index.html
     document.querySelector(UISelectors.itemList).innerHTML = html;
   },
+   //Get the value of the inputs
+   getInput: function(){
+    return {
+      name:document.querySelector(UISelectors.itemName).value,
+      calories:document.querySelector(UISelectors.itemCalories).value
+    }    
+  },
     //Here we add a new item (from the input) to the UI
-    addListItem: function (item) {
+    addListItem: function(item){
     //Create <li> element
     const li = document.createElement("li");
     //Add class 
@@ -89,23 +91,14 @@ return {
     `
     //Add to UI
     document.querySelector(UISelectors.itemList).insertAdjacentElement("beforeend", li);
-
-
-  },
-  //Get the value of the inputs
-  getInput: function () {
-    return {
-      name : document.querySelector(UISelectors.itemName).value,
-      calories : document.querySelector(UISelectors.itemCalories).value
-    }    
   },
   //Clear the inputs (this is only called when a new item is added)
-  clearInput: function() {
+  clearInput: function(){
     document.querySelector(UISelectors.itemName).value = "";
     document.querySelector(UISelectors.itemCalories).value = "";
   },
     //Make UISelectors public
-  getSelectors: function() {
+  getSelectors: function(){
     return UISelectors;
   }
 }
@@ -124,7 +117,7 @@ const App = (function(ItemControl, UIControl) {
   }
 
   //Add item with button
-  const addItemButton = function(e) {
+  const addItemButton = function(e){
     //Get value of inputs from UI Control
     const input = UIControl.getInput();
     if(input.name !== "" && input.calories !== ""){
@@ -141,7 +134,7 @@ const App = (function(ItemControl, UIControl) {
   
   //PUBLIC  
   return {
-    init : function() {
+    init : function(){
       console.log("App initializing")
 
       //Get Items from Itemcontrol
