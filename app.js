@@ -74,7 +74,8 @@ return {
     //Insert list in index.html
     document.querySelector(UISelectors.itemList).innerHTML = html;
   },
-  addListItem: function (item) {
+    //Here we add a new item (from the input) to the UI
+    addListItem: function (item) {
     //Create <li> element
     const li = document.createElement("li");
     //Add class 
@@ -91,11 +92,17 @@ return {
 
 
   },
+  //Get the value of the inputs
   getInput: function () {
     return {
       name : document.querySelector(UISelectors.itemName).value,
       calories : document.querySelector(UISelectors.itemCalories).value
     }    
+  },
+  //Clear the inputs (this is only called when a new item is added)
+  clearInput: function() {
+    document.querySelector(UISelectors.itemName).value = "";
+    document.querySelector(UISelectors.itemCalories).value = "";
   },
     //Make UISelectors public
   getSelectors: function() {
@@ -125,6 +132,8 @@ const App = (function(ItemControl, UIControl) {
       const newItem = ItemControl.addItem(input.name, input.calories);
       //Then we want to add the newItem to UI
       UIControl.addListItem(newItem);
+      //After inserting a new item to UI we want to clear the two input fields 
+      UIControl.clearInput();
     } 
     e.preventDefault();
   }
