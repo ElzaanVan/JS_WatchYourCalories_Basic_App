@@ -20,6 +20,9 @@ const ItemControl = (function () {
  }
  //PUBLIC
  return {
+  getItems: function() {
+    return state.items;
+  },
    logState: function() {
      return state; 
    },
@@ -36,13 +39,12 @@ const ItemControl = (function () {
 
     //Create new Item
     newItem = new Item(ID, name, calories);
-
+    //Add items to array
     state.items.push(newItem);
-
-   },
-   getItems: function() {
-     return state.items;
+    //Return the newItem to be able to access info!
+    return newItem; 
    }
+   
  }
 
 })();
@@ -72,17 +74,30 @@ return {
     //Insert list in index.html
     document.querySelector(UISelectors.itemList).innerHTML = html;
   },
+  addListItem: function (item) {
+    //Create <li> element
+    const li = document.createElement("li");
+    //Add class 
+    li.className= "collection-item"
+    //Add id
+    li.id= `item-${item.id}`
+    //Add html
+    li.innerHTML = `
+    <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+    <a href="#" class="secondary-content"><i class="edit-item fa fa-pencil"></i></a>
+    `
+    //Add to UI
+    document.querySelector(UISelectors.itemList).insertAdjacentElement("beforeend", li);
+
+
+  },
   getInput: function () {
     return {
       name : document.querySelector(UISelectors.itemName).value,
       calories : document.querySelector(UISelectors.itemCalories).value
     }    
   },
-  addItemList: function () {
-    //Create Li
-    const li = document.createElement("li");
-  },
-  //Make UISelectors public
+    //Make UISelectors public
   getSelectors: function() {
     return UISelectors;
   }
@@ -108,8 +123,8 @@ const App = (function(ItemControl, UIControl) {
     if(input.name !== "" && input.calories !== ""){
       //Then we can create item
       const newItem = ItemControl.addItem(input.name, input.calories);
-      //We want to insert item into UI
-      UIControl.addItemList();
+      //Then we want to add the newItem to UI
+      UIControl.addListItem(newItem);
     } 
     e.preventDefault();
   }
