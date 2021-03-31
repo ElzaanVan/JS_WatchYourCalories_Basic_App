@@ -26,7 +26,7 @@ const ItemControl =(function(){
      //CREATE ID
      let ID;
      if(state.items.length > 0){
-      ID = state.items[data.items.length - 1].id + 1;
+      ID = state.items[state.items.length - 1].id + 1;
     } else {
       ID = 0;
     }
@@ -37,6 +37,17 @@ const ItemControl =(function(){
     // Add to items array
     state.items.push(newItem);
     return newItem;
+  },
+  getCalories: function() {
+    let total = 0;
+    //Loop through data and append calories of each item to variable
+    state.items.forEach(function(item) {
+      total += item.calories;
+    });
+    //total calories should equal looped amount
+    state.totalCalories = total
+    //return the state of total calories
+    return state.totalCalories;
   },
    logData: function(){
     return state; 
@@ -50,7 +61,8 @@ const UIControl = (function(){
     itemList: "#item-list",
     addButton: ".add-btn",
     itemCalories: "#item-calories",
-    itemName: "#item-name"
+    itemName: "#item-name",
+    totalCalories: ".total-calories"
   }
   
 //PUBLIC
@@ -97,6 +109,11 @@ return {
     document.querySelector(UISelectors.itemName).value = "";
     document.querySelector(UISelectors.itemCalories).value = "";
   },
+  //Show total calories
+  showTotalCalories: function(totalCals){
+    document.querySelector(UISelectors.totalCalories).textContent = totalCals;
+    console.log(totalCals)
+},
     //Make UISelectors public
   getSelectors: function(){
     return UISelectors;
@@ -125,6 +142,10 @@ const App = (function(ItemControl, UIControl) {
       const newItem = ItemControl.addItem(input.name, input.calories);
       //Then we want to add the newItem to UI
       UIControl.addListItem(newItem);
+      //Get totalCalories
+      const totalCals = ItemControl.getCalories();
+      //Show calories
+      UIControl.showTotalCalories(totalCals)
       //After inserting a new item to UI we want to clear the two input fields 
       UIControl.clearInput();
     } 
