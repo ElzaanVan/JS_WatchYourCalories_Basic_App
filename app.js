@@ -60,6 +60,9 @@ const UIControl = (function(){
   const UISelectors = {
     itemList: "#item-list",
     addButton: ".add-btn",
+    backButton: ".back-btn",
+    updateButton: ".update-btn",
+    deleteButton: ".delete-btn",
     itemCalories: "#item-calories",
     itemName: "#item-name",
     totalCalories: ".total-calories"
@@ -114,6 +117,13 @@ return {
     document.querySelector(UISelectors.totalCalories).textContent = totalCals;
     console.log(totalCals)
 },
+  hideEditState: function() {
+    UIControl.clearInput();
+    document.querySelector(UISelectors.updateButton).style.display = "none";
+    document.querySelector(UISelectors.deleteButton).style.display = "none";
+    document.querySelector(UISelectors.backButton).style.display = "none";
+    document.querySelector(UISelectors.addButton).style.display = "block";
+  },
     //Make UISelectors public
   getSelectors: function(){
     return UISelectors;
@@ -128,6 +138,9 @@ const App = (function(ItemControl, UIControl) {
   const loadEventListeners = function() {
     //Get UISelector for add-button
     const UISelectors = UIControl.getSelectors();
+
+    //Add edit button event listener
+    document.querySelector(UISelectors.itemList).addEventListener("click", editItemButton);
 
     //Add button event listener
     document.querySelector(UISelectors.addButton).addEventListener("click", addItemButton);
@@ -152,12 +165,19 @@ const App = (function(ItemControl, UIControl) {
     e.preventDefault();
   }
 
+  //Edit item with button
+  const editItemButton = function (e) {
+    if(e.target.parentNode.parentNode){
+      const itemId = e.target.parentNode.parentNode.id;
+      console.log(itemId)
+    }
+  }
   
   //PUBLIC  
   return {
     init : function(){
       console.log("App initializing")
-
+      UIControl.hideEditState();
       //Get Items from Itemcontrol
       const items = ItemControl.getItems();
       //Create item list
