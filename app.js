@@ -38,6 +38,19 @@ const ItemControl =(function(){
     state.items.push(newItem);
     return newItem;
   },
+  getItemById: function(id) {
+    let found = null;
+
+    state.items.forEach((item) => {
+      if(item.id === id){
+        found = item
+      }
+    });
+    return found;
+  },
+  setCurrentItem: function(item) {
+    state.currentItem = item;
+  },
   getCalories: function() {
     let total = 0;
     //Loop through data and append calories of each item to variable
@@ -167,10 +180,22 @@ const App = (function(ItemControl, UIControl) {
 
   //Edit item with button
   const editItemButton = function (e) {
-    if(e.target.parentNode.parentNode){
+    if(e.target.classList.contains("edit-item")){
       const itemId = e.target.parentNode.parentNode.id;
-      console.log(itemId)
+      
+      const idArr = itemId.split("-");
+      
+      const id = parseInt(idArr[1]);
+
+      
+      //Item to edit
+      const itemToEdit = ItemControl.getItemById(id);
+
+      ItemControl.setCurrentItem(itemToEdit);
+
+      //Now we want to show the current item in the UI form
     }
+    e.preventDefault();
   }
   
   //PUBLIC  
