@@ -1,3 +1,9 @@
 /* * {
   font-family: Montserrat;
 } */
+
+nav .brand-logo {
+  font-family: Pacifico;
+  color: aliceblue;
+  display: contents;
+}

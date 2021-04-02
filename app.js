@@ -1,3 +1,41 @@
+//Storage Control - this will store the data to LocalStorage
+const StorageControl =(function(){
+
+  //Public methods
+  return {
+    storeItem: function(item) {
+      let items;
+      // Check if any items in ls
+      if(localStorage.getItem('items') === null){
+        items = [];
+        // Push new item
+        items.push(item);
+        // Set ls
+        localStorage.setItem('items', JSON.stringify(items));
+      } else {
+        // Get what is already in ls
+        items = JSON.parse(localStorage.getItem('items'));
+
+        // Push new item
+        items.push(item);
+
+        // Re set ls
+        localStorage.setItem('items', JSON.stringify(items));
+
+      }
+    },
+    getItemFromLS: function() {
+      let items;
+      if(localStorage.getItem('items') === null){
+        items = [];
+      } else {
+        items = JSON.parse(localStorage.getItem('items'));
+      }
+      return items;
+    }
+  }
+})();
+
 //Item Control - Controls all the items plus their state
 const ItemControl =(function(){
 
@@ -10,10 +48,7 @@ const ItemControl =(function(){
 
  //State
  const state = {
-  items: [
-    // {id: 0, name: "Mango", calories: 200},
-    // {id: 1, name: "Oats", calories: 400}
-  ],
+  items: StorageControl.getItemFromLS(),
   currentItem: null,
   totalCalories: 0
 }
@@ -156,7 +191,14 @@ return {
       item.remove();
   },
   clearUIList: function () {
-    return document.querySelector(UISelectors.itemList).innerHTML = null;
+    let listItems = document.querySelectorAll(UISelectors.listItems);
+
+    // Turn Node list into array
+    listItems = Array.from(listItems);
+
+    listItems.forEach(function(item){
+      item.remove();
+    });
   },
    //Get the value of the inputs
    getInput: function(){
@@ -215,7 +257,7 @@ return {
 })();
 
 //App
-const App = (function(ItemControl, UIControl) {
+const App = (function(ItemControl, StorageControl, UIControl) {
 
   //Load event listeners
   const loadEventListeners = function() {
@@ -264,6 +306,8 @@ const App = (function(ItemControl, UIControl) {
       UIControl.showTotalCalories(totalCals)
       //After inserting a new item to UI we want to clear the two input fields 
       UIControl.clearInput();
+      //Store to LS
+      StorageControl.storeItem(newItem);
     } 
     e.preventDefault();
   }
@@ -357,11 +401,15 @@ const App = (function(ItemControl, UIControl) {
       const items = ItemControl.getItems();
       //Create item list
       UIControl.createList(items);
+      //Get totalCalories
+       const totalCals = ItemControl.getCalories();
+      //Show calories
+      UIControl.showTotalCalories(totalCals);
 
       //Load event
       loadEventListeners();
     }
   }
-})(ItemControl, UIControl);
+})(ItemControl, StorageControl, UIControl);
 
 App.init();
