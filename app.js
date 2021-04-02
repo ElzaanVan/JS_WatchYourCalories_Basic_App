@@ -137,6 +137,15 @@ return {
     document.querySelector(UISelectors.backButton).style.display = "none";
     document.querySelector(UISelectors.addButton).style.display = "block";
   },
+  showEditItems: function(itemToEdit) {
+    document.querySelector(UISelectors.itemName).value = itemToEdit.name ;
+    document.querySelector(UISelectors.itemCalories).value = itemToEdit.calories;
+
+    document.querySelector(UISelectors.updateButton).style.display = "inline";
+    document.querySelector(UISelectors.deleteButton).style.display = "inline";
+    document.querySelector(UISelectors.backButton).style.display = "inline";
+    document.querySelector(UISelectors.addButton).style.display = "none";
+  },
     //Make UISelectors public
   getSelectors: function(){
     return UISelectors;
@@ -194,6 +203,7 @@ const App = (function(ItemControl, UIControl) {
       ItemControl.setCurrentItem(itemToEdit);
 
       //Now we want to show the current item in the UI form
+      UIControl.showEditItems(itemToEdit);
     }
     e.preventDefault();
   }
@@ -202,6 +212,7 @@ const App = (function(ItemControl, UIControl) {
   return {
     init : function(){
       console.log("App initializing")
+      //Hide Edit state
       UIControl.hideEditState();
       //Get Items from Itemcontrol
       const items = ItemControl.getItems();
