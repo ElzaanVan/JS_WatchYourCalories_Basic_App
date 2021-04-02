@@ -25,6 +25,9 @@ const ItemControl =(function(){
   currentItem: function() {
     return state.currentItem;
   },
+  clearAll: function(){
+    return state.items = [];
+    },
    addItem: function(name, calories){
      //CREATE ID
      let ID;
@@ -104,6 +107,7 @@ const UIControl = (function(){
     backButton: ".back-btn",
     updateButton: ".update-btn",
     deleteButton: ".delete-btn",
+    clearAllButton: ".clear-btn",
     itemCalories: "#item-calories",
     itemName: "#item-name",
     totalCalories: ".total-calories",
@@ -150,6 +154,9 @@ return {
     const itemID = `#item-${id}`;
       const item = document.querySelector(itemID);
       item.remove();
+  },
+  clearUIList: function () {
+    return document.querySelector(UISelectors.itemList).innerHTML = null;
   },
    //Get the value of the inputs
    getInput: function(){
@@ -234,6 +241,12 @@ const App = (function(ItemControl, UIControl) {
 
     //Delete button event listener
     document.querySelector(UISelectors.deleteButton).addEventListener("click", deleteItemButton);
+
+    //Back button event listener
+    document.querySelector(UISelectors.backButton).addEventListener("click", UIControl.hideEditState);
+
+    //Clear all button event listener
+    document.querySelector(UISelectors.clearAllButton).addEventListener("click", clearAllButton);
   }
 
   //Add item with button
@@ -318,6 +331,20 @@ const App = (function(ItemControl, UIControl) {
         UIControl.hideEditState();
 
       e.preventDefault();
+  }
+
+  //Clear All items with button
+  const clearAllButton = function(e) {
+    //Clear all items from database
+      ItemControl.clearAll();
+    //Clear all items from UI  
+      UIControl.clearUIList();
+    //Get totalCalories
+      const totalCals = ItemControl.getCalories();
+    //Show calories
+      UIControl.showTotalCalories(totalCals);
+    
+    e.preventDefault();
   }
   
   //PUBLIC  
