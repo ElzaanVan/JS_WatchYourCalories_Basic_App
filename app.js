@@ -22,6 +22,9 @@ const ItemControl =(function(){
   getItems: function(){
     return state.items;
   },
+  currentItem: function() {
+    return state.currentItem;
+  },
    addItem: function(name, calories){
      //CREATE ID
      let ID;
@@ -60,6 +63,18 @@ const ItemControl =(function(){
       }
     });
     return found
+  },
+  deletedItem: function(id) {
+    //Get ids
+    const ids = state.items.map((item) => {
+      return item.id
+    });
+
+    //Get Index
+    const index = ids.indexOf(id);
+
+    //Remove item
+    state.items.splice(index, 1);
   },
   setCurrentItem: function(item) {
     state.currentItem = item;
@@ -130,6 +145,11 @@ return {
         `
       }
     });
+  },
+  deleteListItem: function (id) {
+    const itemID = `#item-${id}`;
+      const item = document.querySelector(itemID);
+      item.remove();
   },
    //Get the value of the inputs
    getInput: function(){
@@ -211,6 +231,9 @@ const App = (function(ItemControl, UIControl) {
 
     //Update button event listener
     document.querySelector(UISelectors.updateButton).addEventListener("click", updateItemButton);
+
+    //Delete button event listener
+    document.querySelector(UISelectors.deleteButton).addEventListener("click", deleteItemButton);
   }
 
   //Add item with button
@@ -265,12 +288,36 @@ const App = (function(ItemControl, UIControl) {
 
     //Get totalCalories
     const totalCals = ItemControl.getCalories();
+
     //Show calories
-    UIControl.showTotalCalories(totalCals)
-    //After inserting a new item to UI we want to clear the two input fields 
+    UIControl.showTotalCalories(totalCals);
+
+    //After updating a new item to UI we want to clear the two input fields 
     UIControl.hideEditState();
 
     e.preventDefault();
+  }
+
+  //Delete item with button
+  const deleteItemButton = function (e) {
+      //Get item ID
+        const currentItem = ItemControl.currentItem();
+
+      //Delete Item from itemControl data
+        ItemControl.deletedItem(currentItem.id);
+      
+      //Delete from UI
+         UIControl.deleteListItem(currentItem.id);
+
+      //Get totalCalories
+        const totalCals = ItemControl.getCalories();
+      //Show calories
+        UIControl.showTotalCalories(totalCals);
+
+      //After deleting a new item to UI we want to clear the two input fields 
+        UIControl.hideEditState();
+
+      e.preventDefault();
   }
   
   //PUBLIC  
