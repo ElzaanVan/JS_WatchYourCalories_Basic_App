@@ -48,6 +48,19 @@ const ItemControl =(function(){
     });
     return found;
   },
+  updateItems: function (name, calories) {
+    let found = null;
+    calories = parseInt(calories);
+
+    state.items.forEach((item) => {
+      if(item.id === state.currentItem.id){
+        item.name = name;
+        item.calories = calories;
+        found = item;
+      }
+    });
+    return found
+  },
   setCurrentItem: function(item) {
     state.currentItem = item;
   },
@@ -78,7 +91,8 @@ const UIControl = (function(){
     deleteButton: ".delete-btn",
     itemCalories: "#item-calories",
     itemName: "#item-name",
-    totalCalories: ".total-calories"
+    totalCalories: ".total-calories",
+    listItems: "#item-list li"
   }
   
 //PUBLIC
@@ -96,6 +110,26 @@ return {
     });
     //Insert list in index.html
     document.querySelector(UISelectors.itemList).innerHTML = html;
+  },
+  //Update List
+  updateList: function (item) {
+    let listItems = document.querySelectorAll(UISelectors.listItems)
+
+    //Put into array
+    listItems = Array.from(listItems);
+
+    listItems.forEach((listItem) => {
+      const itemID = listItem.getAttribute("id");
+
+      if(itemID === `item-${item.id}`){
+        document.querySelector(`#${itemID}`).innerHTML = `
+        <li class="collection-item" id="item-${item.id}">
+        <strong>${item.name}: </strong> <em>${item.calories} Calories</em>
+        <a href="#" class="secondary-content"><i class="edit-item fa fa-pencil"></i></a>
+      </li>
+        `
+      }
+    });
   },
    //Get the value of the inputs
    getInput: function(){
@@ -161,11 +195,22 @@ const App = (function(ItemControl, UIControl) {
     //Get UISelector for add-button
     const UISelectors = UIControl.getSelectors();
 
+    //Disable enter key
+    document.addEventListener("keypress", ((e) => {
+      if(e.which === 13 || e.keyCode === 13){
+        e.preventDefault();
+        return false;
+      }
+    }))
+
     //Add edit button event listener
     document.querySelector(UISelectors.itemList).addEventListener("click", editItemButton);
 
     //Add button event listener
     document.querySelector(UISelectors.addButton).addEventListener("click", addItemButton);
+
+    //Update button event listener
+    document.querySelector(UISelectors.updateButton).addEventListener("click", updateItemButton);
   }
 
   //Add item with button
@@ -205,6 +250,26 @@ const App = (function(ItemControl, UIControl) {
       //Now we want to show the current item in the UI form
       UIControl.showEditItems(itemToEdit);
     }
+    e.preventDefault();
+  }
+
+  //Update item with button
+  const updateItemButton = function (e) {
+    //Get item input
+    const input = UIControl.getInput();
+    //Update Item
+    const updatedItem = ItemControl.updateItems(input.name, input.calories)
+
+    //Show in UI
+    UIControl.updateList(updatedItem);
+
+    //Get totalCalories
+    const totalCals = ItemControl.getCalories();
+    //Show calories
+    UIControl.showTotalCalories(totalCals)
+    //After inserting a new item to UI we want to clear the two input fields 
+    UIControl.hideEditState();
+
     e.preventDefault();
   }
   
