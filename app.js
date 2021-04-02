@@ -19,7 +19,7 @@ const StorageControl =(function(){
         // Push new item
         items.push(item);
 
-        // Re set ls
+        // Reset ls
         localStorage.setItem('items', JSON.stringify(items));
 
       }
@@ -32,7 +32,18 @@ const StorageControl =(function(){
         items = JSON.parse(localStorage.getItem('items'));
       }
       return items;
-    }
+    },
+    updateItemToLS: function(updatedItem) {
+      let items = JSON.parse(localStorage.getItem("items"))
+
+      items.forEach((item, index) => {
+        if(item.id === updatedItem.id){
+          items.splice(index, 1, updatedItem);
+        }
+      });
+      // Reset ls
+      localStorage.setItem('items', JSON.stringify(items));
+    },
   }
 })();
 
@@ -348,6 +359,9 @@ const App = (function(ItemControl, StorageControl, UIControl) {
 
     //Show calories
     UIControl.showTotalCalories(totalCals);
+
+    //Add update Item to local Storage
+    StorageControl.updateItemToLS(updatedItem);
 
     //After updating a new item to UI we want to clear the two input fields 
     UIControl.hideEditState();
